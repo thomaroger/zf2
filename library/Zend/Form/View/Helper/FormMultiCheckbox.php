@@ -68,6 +68,13 @@ class FormMultiCheckbox extends FormInput
     protected $labelHelper;
 
     /**
+     * Escape HTML for label
+     *
+     * @var FormLabel
+     */
+    protected $escapeHtml = true;
+
+    /**
      * Invoke helper as functor
      *
      * Proxies to {@link render()}.
@@ -76,7 +83,7 @@ class FormMultiCheckbox extends FormInput
      * @param  null|string           $labelPosition
      * @return string|FormMultiCheckbox
      */
-    public function __invoke(ElementInterface $element = null, $labelPosition = null)
+    public function __invoke(ElementInterface $element = null, $labelPosition = null, $escapeHtml = null)
     {
         if (!$element) {
             return $this;
@@ -84,6 +91,10 @@ class FormMultiCheckbox extends FormInput
 
         if ($labelPosition !== null) {
             $this->setLabelPosition($labelPosition);
+        }
+
+        if ($escapeHtml !== null) {
+            $this->setEscapeHtml($escapeHtml);
         }
 
         return $this->render($element);
@@ -221,8 +232,11 @@ class FormMultiCheckbox extends FormInput
                     $label, $this->getTranslatorTextDomain()
                 );
             }
+            
+            if ($this->getEscapeHtml()) {
+                $label = $escapeHtmlHelper($label);
+            }
 
-            $label     = $escapeHtmlHelper($label);
             $labelOpen = $labelHelper->openTag($labelAttributes);
             $template  = $labelOpen . '%s%s' . $labelClose;
             switch ($labelPosition) {
@@ -323,6 +337,31 @@ class FormMultiCheckbox extends FormInput
     {
         return $this->labelPosition;
     }
+
+    /**
+     * Set value for escapeHtml
+     *
+     * @param  boolean $escapeHtml
+     * @return FormMultiCheckbox
+     */
+    public function setEscapeHtml($escapeHtml)
+    {
+        $this->escapeHtml = (bool) $escapeHtml;
+
+        return $this;
+    }
+
+     /**
+     * Get value of escape html
+     *
+     * @return bool
+     */
+    public function getEscapeHtml()
+    {   
+        return $this->escapeHtml;
+    }
+
+   
 
     /**
      * Set separator string for checkbox elements
